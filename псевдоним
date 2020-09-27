@@ -1,0 +1,51 @@
+import sys
+from PyQt5 import uic
+from PyQt5.QtWidgets import QApplication, QWidget
+
+
+class Window(QWidget):
+    def __init__(self):
+        super(QWidget, self).__init__()
+        uic.loadUi('Псевдоним.ui', self)
+        self.pushButton.clicked.connect(self.counter)
+        self.pushButton_2.clicked.connect(self.game)
+
+    def counter(self):
+        self.lcdNumber.display(self.spinBox.value())
+        self.listWidget.clear()
+        self.pushButton_2.setEnabled(True)
+        self.label_3.setText('')
+
+    def game(self):
+        self.last_move = ''
+        play = f'Игрок взял - {self.lineEdit.text()}' + '\n'
+        play_II = ''
+        self.last_move = 'Игрок'
+        self.lcdNumber.display(self.lcdNumber.value() - int(self.lineEdit.text()))
+        if self.lcdNumber.value() % 4 == 0 and self.lcdNumber.value() > 0:
+            play_II = f'Компьютер взял - 1'
+            self.last_move = 'Компьютер'
+            self.lcdNumber.display(self.lcdNumber.value() - 1)
+        else:
+            if self.lcdNumber.value() > 0:
+                play_II = f'Компьютер взял - {int(self.lcdNumber.value() % 4)}'
+                self.lcdNumber.display(self.lcdNumber.value() - self.lcdNumber.value() % 4)
+                self.last_move = 'Компьютер'
+        self.listWidget.addItem(play + play_II)
+        if self.lcdNumber.value() == 0:
+            self.check_win()
+
+    def check_win(self):
+        if self.last_move == 'Компьютер':
+            self.label_3.setText('Победил компьютер!')
+            self.pushButton_2.setEnabled(False)
+        elif self.last_move == 'Игрок':
+            self.label_3.setText('Ты победил!')
+            self.pushButton_2.setEnabled(False)
+
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    ex = Window()
+    ex.show()
+    sys.exit(app.exec_())
